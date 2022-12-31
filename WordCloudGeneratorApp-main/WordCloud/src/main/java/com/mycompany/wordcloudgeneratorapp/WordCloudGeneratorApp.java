@@ -9,10 +9,11 @@ ISSUES
 - Explain differences between using maxent and perceptron algorithm (create .txt)
 - en-sent.bin has to be 1.5.3!!
 - manually remove errors ("Positive", "Negative"...)
-- POS tagset doesn't match all words: VB, VBZ... so we just use VB -> USE REGEX
+- POS tagset doesn't match all words: VB, VBZ... so we just use VB -> USE REGEX (cambie la linea 247 y ya pilla todos)
 - Folders inside project
 - Fragment
-
+-linea 130 y 247 para cambiar los VB
+-linea 171 ponerlo bien
 */
 
 
@@ -49,20 +50,44 @@ import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
+import java.io.*;
 
 public class WordCloudGeneratorApp {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         
-        final String csvPath = "C://Users//Jokin//Documents//NetBeansProjects//WordCloud//Conget.csv/";
-        final String sentDetectorBinaryPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-sent.bin/";
-        final String tokenizerBinaryPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-token.bin";
-        final String nameFinderBinaryPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-ner-person.bin";        
-        final String maxentBinPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-pos-maxent.bin";
-        final String perceptronBinPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-pos-perceptron.bin";
-        final String outputPngPath; //WE WILL ASK FOR THIS LATER
+//        final String csvPath = "C://Users//Jokin//Documents//NetBeansProjects//WordCloud//Conget.csv/";
+//        final String sentDetectorBinaryPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-sent.bin/";
+//        final String tokenizerBinaryPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-token.bin";
+//        final String nameFinderBinaryPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-ner-person.bin";        
+//        final String maxentBinPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-pos-maxent.bin";
+//        final String perceptronBinPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//en-pos-perceptron.bin";
+
+//        final String csvPath = "C://Users//yago2//Documents//NetBeansProjects//WordCloudGeneratorApp//WordCloud//Conget.csv/";
+//        final String sentDetectorBinaryPath = "C://Users//yago2//Desktop//en-sent.bin/";
+//        final String tokenizerBinaryPath = "C://Users//yago2//Desktop//en-token.bin";
+//        final String nameFinderBinaryPath = "C://Users//yago2//Desktop//en-ner-person.bin";        
+//        final String maxentBinPath = "C://Users//yago2//Desktop//en-pos-maxent.bin";
+//        final String perceptronBinPath = "C://Users//yago2//Desktop//en-pos-perceptron.bin";
+//        final String outputPngPath; //WE WILL ASK FOR THIS LATER
         
+        
+        File fcsvPath = new File("Conget.csv");
+        File fsentDetectorBinaryPath = new File("en-sent.bin");
+        File ftokenizerBinaryPath = new File("en-token.bin");
+        File fnameFinderBinaryPath = new File("en-ner-person.bin");        
+        File fmaxentBinPath = new File("en-pos-maxent.bin");
+        File fperceptronBinPath = new File("en-pos-perceptron.bin");
+        
+        final String csvPath = fcsvPath.getAbsolutePath();
+        final String sentDetectorBinaryPath = fsentDetectorBinaryPath.getAbsolutePath();
+        final String tokenizerBinaryPath = ftokenizerBinaryPath.getAbsolutePath();
+        final String nameFinderBinaryPath = fnameFinderBinaryPath.getAbsolutePath();  
+        final String maxentBinPath = fmaxentBinPath.getAbsolutePath();
+        final String perceptronBinPath = fperceptronBinPath.getAbsolutePath();  
+        
+        final String outputPngPath; //WE WILL ASK FOR THIS LATER
         //================================================================================//
         //INITIALIZE CSV READER TO READ REVIEWS FROM CSV LINE BY LINE
         try
@@ -144,7 +169,12 @@ public class WordCloudGeneratorApp {
             }
             else
             {
-                outputPngPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//%s.png".formatted(fileName);
+  //              File foutputPngPath = new File();       
+   //             final String outputPngPath = foutputPngPath.getAbsolutePath()+"//%s.png".formatted(fileName);
+               outputPngPath = ".//%s.png".formatted(fileName);
+                System.out.println(outputPngPath);
+//                 outputPngPath = "C://Users//yago2//Desktop//%s.png".formatted(fileName);
+//                outputPngPath = "C://Users//Jokin//Desktop//Libros Teoria//POO//%s.png".formatted(fileName);
                 break;
             }
         }
@@ -235,8 +265,9 @@ public class WordCloudGeneratorApp {
                             String tag = posTagger.tag(token).split("/")[1];
 //                            System.out.println("\nTAG: "+tag+"WORD: "+candidate);
                             
-                            if(tag.equals(typeOfWord)) //TOKEN MATCHES TYPE OF WORD TO USE IN WORDCLOUD
-                            {                               
+                            if(tag.startsWith(typeOfWord))
+                            {            
+  //                              System.out.println("true");
                                 if (freqs.containsKey(candidate)) //WORD HAS ALREADY APPEARED. ADD 1 TO FREQUENCY
                                 {
                                     WordFrequency wf = freqs.get(candidate);
@@ -254,6 +285,25 @@ public class WordCloudGeneratorApp {
                 }
                 //================================================================================//                
                 
+               //WE NEED TO MANUALLY DELETE ERRORS. DEPENDS ON WHAT TYPE OF WORDS YOU WANT; THERE WILL BE DIFFERENT ISSUES LIKE "n't"
+                
+                if(typeOfWord.equals("RB")) //adverbs
+                {
+                    
+                }
+                else if(typeOfWord.equals("VB"))
+                {
+                    
+                }
+                else if(typeOfWord.equals("JJ")) //adjectives
+                {
+                    freqs.remove("negative");
+                    freqs.remove("positive");
+                }
+                else//if(typeOfWord.equals("NN")
+                {
+                    
+                }
                 
                 //================================================================================//                
                 //we now have the frequencies for each candidate
@@ -266,24 +316,6 @@ public class WordCloudGeneratorApp {
                 wordCloud.setPadding(2);
                 wordCloud.setBackground(new RectangleBackground(dimension));
                 
-                //WE NEED TO MANUALLY DELETE ERRORS. DEPENDS ON WHAT TYPE OF WORDS YOU WANT; THERE WILL BE DIFFERENT ISSUES LIKE "n't"
-                
-                if(typeOfWord.equals("RB"))
-                {
-
-                }
-                else if(typeOfWord.equals("VB"))
-                {
-                    
-                }
-                else if(typeOfWord.equals("JJ"))
-                {
-                    
-                }
-                else//if(typeOfWord.equals("NN")
-                {
-                    
-                }
                 
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 wordCloud.writeToStreamAsPNG(byteArrayOutputStream);
